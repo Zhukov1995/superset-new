@@ -421,6 +421,7 @@ const config = {
             options: {
               titleProp: true,
               ref: true,
+              svgo: false,
               // this is the default value for the icon. Using other values
               // here will replace width and height in svg with 1em
               icon: false,
