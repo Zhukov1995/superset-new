@@ -92,7 +92,21 @@ class CeleryConfig:
 
 CELERY_CONFIG = CeleryConfig
 
-FEATURE_FLAGS = {"ALERT_REPORTS": True}
+SECRET_KEY = 'nX+jv0d5LCFusE/f92nVAekdpSrsinj5BakkoTTjxBxOpYOK8UsGIrUs'
+TALISMAN_ENABLED = False
+# Набор фич FEATURE_FLAGS
+FEATURE_FLAGS = {
+    "ALERT_REPORTS": True,
+    "DRILL_BY": True,
+    "DRILL_TO_DETAIL": True,
+    "HORIZONTAL_FILTER_BAR": True,
+    "DASHBOARD_CROSS_FILTERS": True,
+    "ENABLE_TEMPLATE_PROCESSING": True,
+    "TAGGING_SYSTEM": True,
+    "HORIZONTAL_FILTER_BAR": True,
+    "ENABLE_EXPLORE_DRAG_AND_DROP": True,
+}
+
 ALERT_REPORTS_NOTIFICATION_DRY_RUN = True
 WEBDRIVER_BASEURL = "http://superset:8088/"
 # The base URL for the email report hyperlinks.
