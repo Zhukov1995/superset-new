@@ -18,7 +18,6 @@
  */
 
 // Deprecated component
-/* eslint-disable theme-colors/no-literal-colors */
 
 import React, { CSSProperties, ComponentType, ReactNode } from 'react';
 import { SerializedStyles } from '@emotion/react';

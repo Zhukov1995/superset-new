@@ -422,9 +422,7 @@ const config: ControlPanelConfig = {
               label: t('Show Scheme'),
               default: false,
               renderTrigger: true,
-              description: t(
-                'Show or hide SVG Scheme',
-              ),
+              description: t('Show or hide SVG Scheme'),
             },
           },
         ],

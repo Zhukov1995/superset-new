@@ -92,6 +92,12 @@ class CeleryConfig:
 
 CELERY_CONFIG = CeleryConfig
 
+
+APP_NAME = "Superset Techpeople"
+APP_ICON = "/static/assets/techpeople_images/logo.png"
+# FAVICONS = [{"href": "/static/assets/logo_images/techpeople_images/favicon.png"}]
+
+
 SECRET_KEY = 'nX+jv0d5LCFusE/f92nVAekdpSrsinj5BakkoTTjxBxOpYOK8UsGIrUs'
 TALISMAN_ENABLED = False
 # Набор фич FEATURE_FLAGS

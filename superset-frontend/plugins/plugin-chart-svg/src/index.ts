@@ -40,9 +40,7 @@ const metadata = new ChartMetadata({
   ),
   exampleGallery: [{ url: thumbnail }],
   name: t('Table with SVG'),
-  tags: [
-    t('custom'),
-  ],
+  tags: [t('custom')],
   thumbnail,
 });
 

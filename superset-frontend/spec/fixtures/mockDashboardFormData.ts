@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/* eslint-disable theme-colors/no-literal-colors */
 import { JsonObject } from '@superset-ui/core';
 
 export const getDashboardFormData = (overrides: JsonObject = {}) => ({

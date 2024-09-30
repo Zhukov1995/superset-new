@@ -68,7 +68,6 @@ import getScrollBarSize from './DataTable/utils/getScrollBarSize';
 // import SchemeFloor from './scheme_floor/pic18.svg';
 import SchemeFloor from './scheme_floor/pic18.svg';
 
-
 type ValueRange = [number, number];
 
 interface TableSize {
@@ -190,7 +189,7 @@ function SelectPageSize({
       <select
         className="form-control input-sm"
         value={current}
-        onBlur={() => { }}
+        onBlur={() => {}}
         onChange={e => {
           onChange(Number((e.target as HTMLSelectElement).value));
         }}
@@ -243,6 +242,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     allowRearrangeColumns = false,
     onContextMenu,
     emitCrossFilters,
+    // @ts-ignore
     showScheme,
   } = props;
   const timestampFormatter = useCallback(
@@ -323,21 +323,21 @@ export default function TableChart<D extends DataRecord = DataRecord>(
             groupBy.length === 0
               ? []
               : groupBy.map(col => {
-                const val = ensureIsArray(updatedFilters?.[col]);
-                if (!val.length)
+                  const val = ensureIsArray(updatedFilters?.[col]);
+                  if (!val.length)
+                    return {
+                      col,
+                      op: 'IS NULL' as const,
+                    };
                   return {
                     col,
-                    op: 'IS NULL' as const,
+                    op: 'IN' as const,
+                    val: val.map(el =>
+                      el instanceof Date ? el.getTime() : el!,
+                    ),
+                    grain: col === DTTM_ALIAS ? timeGrain : undefined,
                   };
-                return {
-                  col,
-                  op: 'IN' as const,
-                  val: val.map(el =>
-                    el instanceof Date ? el.getTime() : el!,
-                  ),
-                  grain: col === DTTM_ALIAS ? timeGrain : undefined,
-                };
-              }),
+                }),
         },
         filterState: {
           label: labelElements.join(', '),
@@ -367,8 +367,8 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     const textAlign = config.horizontalAlign
       ? config.horizontalAlign
       : isNumeric
-        ? 'right'
-        : 'left';
+      ? 'right'
+      : 'left';
     return {
       textAlign,
     };
@@ -377,46 +377,46 @@ export default function TableChart<D extends DataRecord = DataRecord>(
   const handleContextMenu =
     onContextMenu && !isRawRecords
       ? (
-        value: D,
-        cellPoint: {
-          key: string;
-          value: DataRecordValue;
-          isMetric?: boolean;
-        },
-        clientX: number,
-        clientY: number,
-      ) => {
-        const drillToDetailFilters: BinaryQueryObjectFilterClause[] = [];
-        columnsMeta.forEach(col => {
-          if (!col.isMetric) {
-            const dataRecordValue = value[col.key];
-            drillToDetailFilters.push({
-              col: col.key,
-              op: '==',
-              val: dataRecordValue as string | number | boolean,
-              formattedVal: formatColumnValue(col, dataRecordValue)[1],
-            });
-          }
-        });
-        onContextMenu(clientX, clientY, {
-          drillToDetail: drillToDetailFilters,
-          crossFilter: cellPoint.isMetric
-            ? undefined
-            : getCrossFilterDataMask(cellPoint.key, cellPoint.value),
-          drillBy: cellPoint.isMetric
-            ? undefined
-            : {
-              filters: [
-                {
-                  col: cellPoint.key,
-                  op: '==',
-                  val: cellPoint.value as string | number | boolean,
+          value: D,
+          cellPoint: {
+            key: string;
+            value: DataRecordValue;
+            isMetric?: boolean;
+          },
+          clientX: number,
+          clientY: number,
+        ) => {
+          const drillToDetailFilters: BinaryQueryObjectFilterClause[] = [];
+          columnsMeta.forEach(col => {
+            if (!col.isMetric) {
+              const dataRecordValue = value[col.key];
+              drillToDetailFilters.push({
+                col: col.key,
+                op: '==',
+                val: dataRecordValue as string | number | boolean,
+                formattedVal: formatColumnValue(col, dataRecordValue)[1],
+              });
+            }
+          });
+          onContextMenu(clientX, clientY, {
+            drillToDetail: drillToDetailFilters,
+            crossFilter: cellPoint.isMetric
+              ? undefined
+              : getCrossFilterDataMask(cellPoint.key, cellPoint.value),
+            drillBy: cellPoint.isMetric
+              ? undefined
+              : {
+                  filters: [
+                    {
+                      col: cellPoint.key,
+                      op: '==',
+                      val: cellPoint.value as string | number | boolean,
+                    },
+                  ],
+                  groupbyFieldName: 'groupby',
                 },
-              ],
-              groupbyFieldName: 'groupby',
-            },
-        });
-      }
+          });
+        }
       : undefined;
 
   const getColumnConfigs = useCallback(
@@ -506,19 +506,19 @@ export default function TableChart<D extends DataRecord = DataRecord>(
             ${valueRange &&
             `
                 width: ${`${cellWidth({
-              value: value as number,
-              valueRange,
-              alignPositiveNegative,
-            })}%`};
+                  value: value as number,
+                  valueRange,
+                  alignPositiveNegative,
+                })}%`};
                 left: ${`${cellOffset({
-              value: value as number,
-              valueRange,
-              alignPositiveNegative,
-            })}%`};
+                  value: value as number,
+                  valueRange,
+                  alignPositiveNegative,
+                })}%`};
                 background-color: ${cellBackground({
-              value: value as number,
-              colorPositiveNegative,
-            })};
+                  value: value as number,
+                  colorPositiveNegative,
+                })};
               `}
           `;
 
@@ -528,11 +528,11 @@ export default function TableChart<D extends DataRecord = DataRecord>(
             onClick:
               emitCrossFilters && !valueRange && !isMetric
                 ? () => {
-                  // allow selecting text in a cell
-                  if (!getSelectedText()) {
-                    toggleFilter(key, value);
+                    // allow selecting text in a cell
+                    if (!getSelectedText()) {
+                      toggleFilter(key, value);
+                    }
                   }
-                }
                 : undefined,
             onContextMenu: (e: MouseEvent) => {
               if (handleContextMenu) {
@@ -734,9 +734,9 @@ export default function TableChart<D extends DataRecord = DataRecord>(
   //           echarts.registerMap('testing', { svg: svgText });
   //           console.log(svgText);
   //           const div = ref.current as unknown as HTMLElement;
-  //           let myChart = echarts.init(div, undefined , { 
+  //           let myChart = echarts.init(div, undefined , {
   //             renderer: 'svg',
-  //             width: 500, 
+  //             width: 500,
   //             height: 500,
   //           });
   //           const data1 = [
@@ -785,7 +785,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     ref.current.style.zIndex = 10;
     if (arrElements.length) {
       // @ts-ignore
-      let arrNames = [];
+      const arrNames = [];
       const tooltip = refTolltip.current;
       arrElements.forEach((el: any) => {
         const name = el.getAttribute('name');
@@ -798,11 +798,11 @@ export default function TableChart<D extends DataRecord = DataRecord>(
           // @ts-ignore
           const color = adjustColor(backgroundColor, -52);
           // @ts-ignore
-          tooltip.style.display = "block";
+          tooltip.style.display = 'block';
           // @ts-ignore
-          tooltip.style.left = e.offsetX + 'px';
+          tooltip.style.left = `${e.offsetX}px`;
           // @ts-ignore
-          tooltip.style.top = e.offsetY + 25 + 'px';
+          tooltip.style.top = `${e.offsetY + 25}px`;
           // @ts-ignore
           tooltip.innerHTML = target.status;
           // @ts-ignore
@@ -815,9 +815,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
         el.addEventListener('mouseleave', (e: any) => {
           e.target.style.opacity = 0.5;
           // @ts-ignore
-          refTolltip.current.style.display = "none";
-
-
+          refTolltip.current.style.display = 'none';
         });
       });
       data1.forEach(el => {
@@ -826,7 +824,6 @@ export default function TableChart<D extends DataRecord = DataRecord>(
         arrElements[index].style.opacity = 0.5;
         // @ts-ignore
         arrElements[index].style.fill = getColor(el.status);
-
       });
     }
   }, []);
@@ -862,17 +859,16 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   function adjustColor(hex: string, amount: number) {
     // Преобразуем HEX в число
-    let color = parseInt(hex.startsWith("#") ? hex.slice(1) : hex, 16);
+    const color = parseInt(hex.startsWith('#') ? hex.slice(1) : hex, 16);
 
     // Регулируем каждый компонент RGB в пределах 0-255
-    let r = Math.min(255, Math.max(0, (color >> 16) + amount));
-    let g = Math.min(255, Math.max(0, ((color & 0x00FF00) >> 8) + amount));
-    let b = Math.min(255, Math.max(0, (color & 0x0000FF) + amount));
+    const r = Math.min(255, Math.max(0, (color >> 16) + amount));
+    const g = Math.min(255, Math.max(0, ((color & 0x00ff00) >> 8) + amount));
+    const b = Math.min(255, Math.max(0, (color & 0x0000ff) + amount));
 
     // Возвращаем исправленный цвет в HEX-формате
-    return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+    return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
   }
-
 
   const Table = (
     <Styles>
@@ -902,7 +898,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   return (
     <div>
-      {showScheme ?
+      {showScheme ? (
         <div
           id="scheme"
           style={{
@@ -912,7 +908,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
             position: 'relative',
             width: 'fit-content',
             height: 'fit-content',
-            margin: '0 auto'
+            margin: '0 auto',
           }}
         >
           <SchemeFloor ref={ref} />
@@ -926,14 +922,15 @@ export default function TableChart<D extends DataRecord = DataRecord>(
               borderRadius: '5px',
               padding: '5px',
               zIndex: 1000,
-              opacity: 1
-            }}>
+              opacity: 1,
+            }}
+          >
             Not Data
           </div>
         </div>
-        :
+      ) : (
         Table
-      }
+      )}
     </div>
   );
 }

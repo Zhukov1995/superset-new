@@ -294,6 +294,7 @@ const transformProps = (
     timeGrain,
     allowRearrangeColumns,
     onContextMenu,
+    // @ts-ignore
     showScheme,
   };
 };
