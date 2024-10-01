@@ -25,7 +25,6 @@ ARG BUILDPLATFORM=${BUILDPLATFORM:-amd64}
 FROM --platform=${BUILDPLATFORM} node:16-bookworm-slim AS superset-node
 
 ARG NPM_BUILD_CMD="build"
-ARG NPM_LINT_FIX="lint-fix"
 
 RUN apt-get update -qq \
     && apt-get install -yqq --no-install-recommends \
@@ -46,7 +45,6 @@ RUN --mount=type=bind,target=./package.json,src=./superset-frontend/package.json
 
 COPY ./superset-frontend ./
 # This seems to be the most expensive step
-RUN npm run ${NPM_LINT_FIX}
 RUN npm run ${BUILD_CMD}
 
 ######################################################################
